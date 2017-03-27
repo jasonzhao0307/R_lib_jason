@@ -1,6 +1,6 @@
 # R_lib_jason
 
-To load all the functions, try install a package called: R.utils
+To load all the functions, try install a package called: R.utils__
 And do the following:  
 ```
 library(R.utils)
