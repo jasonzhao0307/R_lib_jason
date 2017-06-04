@@ -26,10 +26,14 @@ for (i in seq(1,nRun,1)) {
       featureDict[[gene]] <- featureDict[[gene]] + 1
     }
     else{
-      featureDict[[gene]] <- 1
+      if (is.na(gene) == FALSE){
+        featureDict[[gene]] <- 1
+      }
+      
     }
   }
 }
+#print(featureDict)
 
 featureSelectionComplete <- names(featureDict)
 
@@ -38,6 +42,7 @@ numFloor <- floor(mean(featureNum))
 featureDictInverse <- list()
 for (i in seq(1,length(featureDict),1)){
   numTmp <- featureDict[[i]]
+  #print(numTmp)
   numTmpChr <- as.character(numTmp)
   if (numTmp %in% names(featureDictInverse)){
     featureDictInverse[[numTmpChr]] <- c(featureDictInverse[[numTmpChr]], names(featureDict)[i])

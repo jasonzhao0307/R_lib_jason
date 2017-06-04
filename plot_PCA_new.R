@@ -1,4 +1,4 @@
-plot_PCA_new <- function(sampleDataFrame, condition, useLabel = FALSE, labelSize = 2, title = "PCA plot", useVST = FALSE, useAllFeature = TRUE, nFeature = 1000, printUsage = F){
+plot_PCA_new <- function(sampleDataFrame, condition, useLabel = FALSE, title = "PCA plot", useVST = FALSE, useAllFeature = TRUE, nFeature = 1000, printUsage = F, pointSize = 4, useFrame = FALSE){
 
 # print usage
 # use cat to create newline in R
@@ -26,6 +26,13 @@ require(DESeq2)
 require(ggplot2)
 require(ggfortify)
 
+
+#test and fix the constant/zero row
+if (sum(rowSums(as.matrix(sampleDataFrame)) == 0) > 0){
+	sampleDataFrame <- sampleDataFrame[-which(rowSums(as.matrix(sampleDataFrame)) == 0),]
+}
+
+
 # simple functions
 RowVar <- function(x) {
   rowSums((x - rowMeans(x))^2)/(dim(x)[2] - 1)
@@ -50,20 +57,22 @@ if (useVST == TRUE){
 	  	vst <- varianceStabilizingTransformation(dds, blind=TRUE)
 		data <- plotPCA(vst, intgroup=c("condition"), returnData=TRUE, ntop = nFeature)
 		percentVar <- round(100 * attr(data, "percentVar"))
-		plot_handle <- ggplot(data, aes(PC1, PC2, color=condition, label = colnames(sampleDataFrame))) +
+		# plot_handle <- ggplot()
+		ggplot(data, aes(PC1, PC2, color=condition, label = colnames(sampleDataFrame))) +
  		xlab(paste0("PC1: ",percentVar[1],"% variance")) +
- 		ylab(paste0("PC2: ",percentVar[2],"% variance")) +labs(title=title) + geom_text(size = labelSize) 
+ 		ylab(paste0("PC2: ",percentVar[2],"% variance")) +labs(title=title) + geom_text(size = pointSize) + theme(plot.title = element_text(hjust = 0.5))
 	}
 	else{
 		vst <- varianceStabilizingTransformation(dds, blind=TRUE)
 		data <- plotPCA(vst, intgroup=c("condition"), returnData=TRUE, ntop = nFeature)
 		percentVar <- round(100 * attr(data, "percentVar"))
-		plot_handle <- ggplot(data, aes(PC1, PC2, color=condition, label = colnames(sampleDataFrame))) +
+		# plot_handle <- ggplot()
+		ggplot(data, aes(PC1, PC2, color=condition, label = colnames(sampleDataFrame))) +
  		xlab(paste0("PC1: ",percentVar[1],"% variance")) +
- 		ylab(paste0("PC2: ",percentVar[2],"% variance")) +labs(title=title) + geom_point(size = labelSize)
+ 		ylab(paste0("PC2: ",percentVar[2],"% variance")) +labs(title=title) + geom_point(size = pointSize) + theme(plot.title = element_text(hjust = 0.5))
 	}
-	result <- plot_handle
-	return(result)	
+	#result <- plot_handle
+	#return(result)	
 
 }
 else {
@@ -83,17 +92,19 @@ else {
 
 
 	if (useLabel == FALSE){
-		plot_handle <- autoplot(pca_result, data = sampleDataFrame_pca, colour = 'condition', 
-		main = title, xlab = paste0("PC1: ",percentVar[1],"% variance"), ylab = paste0("PC2: ",percentVar[2],"% variance"))
+		# plot_handle <- autoplot()
+		autoplot(pca_result, data = sampleDataFrame_pca, colour = 'condition', size = pointSize, frame = useFrame,
+		main = title, xlab = paste0("PC1: ",percentVar[1],"% variance"), ylab = paste0("PC2: ",percentVar[2],"% variance")) + theme(plot.title = element_text(hjust = 0.5))
 	}
 	else{
-		plot_handle <- autoplot(pca_result, data = sampleDataFrame_pca, colour = 'condition',
-		shape = FALSE, label.size = labelSize, main = title,
-		xlab = paste0("PC1: ",percentVar[1],"% variance"), ylab = paste0("PC2: ",percentVar[2],"% variance"))
+		# plot_handle <- autoplot()
+		autoplot(pca_result, data = sampleDataFrame_pca, colour = 'condition', label.size = pointSize, frame = useFrame, 
+		shape = FALSE, main = title,
+		xlab = paste0("PC1: ",percentVar[1],"% variance"), ylab = paste0("PC2: ",percentVar[2],"% variance")) + theme(plot.title = element_text(hjust = 0.5))
 	}
 
-	result <- plot_handle
-	return(result)
+	#result <- plot_handle
+	#return(result)
 
 }
 
