@@ -1,7 +1,7 @@
 require(glmnet)
 require(ROCR)
 
-colorVec <- c("red", "blue", "green", "black", "purple","yellow")
+colorVec <- c("red", "blue", "green", "black", "purple","yellow", "orange")
 
 LOOAUC_simple_multiple <- function(dfList, targetVec,signatureNameVec, title = "ROC curve", xLegendLocation=0.7, yLegendLocation = 0.5){
 par(mar=c(3,3,3,3))
@@ -11,13 +11,13 @@ for (i in 1:length(dfList)){
 	df <- dfList[[i]]
 	nSample <- ncol(df)
 	vecProbTmp <- c()
-	for (j in 1:nSample){	
+	for (j in 1:nSample){
 		train = t(as.matrix(df[,-j]))
 		test = t(as.matrix(df[,j]))
   	 	 fit <- glmnet(train, targetVec[-j], family = "binomial")
   	 	 testProb <- predict(fit,type="response", newx = test, s = 0)
   	 	 vecProbTmp <- c(vecProbTmp, testProb)
-	}		
+	}
 	loo.pred = prediction(vecProbTmp, targetVec)
 	loo.perf = performance(loo.pred,"tpr","fpr")
 #plot the curve
@@ -46,6 +46,3 @@ legend(xLegendLocation,yLegendLocation, signatureAndAUC, lty=c(rep(1,length(dfLi
 
 return(aucList)
 }
-
-
-
