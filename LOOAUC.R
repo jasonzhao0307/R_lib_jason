@@ -1,6 +1,9 @@
 require(glmnet)
 require(ROCR)
 
+# Here, we do cv.glmnet, aka elastic net. when alpha = 0, it's ridge regression.
+# Thus, we need to repeat for a couple of times (numRepeat)
+# However, if we do simple regression, we then just need run glmnet once. 
 
 LOOAUC <- function(df, targetVec, nfolds = 3, numRepeat = 50){
 
