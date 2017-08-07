@@ -1,3 +1,5 @@
+# test
+
 require(glmnet)
 require(ROCR)
 
@@ -45,4 +47,31 @@ for (i in 1:length(dfList)){
 legend(xLegendLocation,yLegendLocation, signatureAndAUC, lty=c(rep(1,length(dfList))), col=colorVec)
 
 return(aucList)
+}
+
+
+
+
+LOOAUC_simple_multiple_noplot <- function(dfList, targetVec){
+auc.vec <- c()
+for (i in 1:length(dfList)){
+	df <- dfList[[i]]
+	nSample <- ncol(df)
+	vecProbTmp <- c()
+	for (j in 1:nSample){
+		train = t(as.matrix(df[,-j]))
+		test = t(as.matrix(df[,j]))
+  	 	 fit <- glmnet(train, targetVec[-j], family = "binomial")
+  	 	 testProb <- predict(fit,type="response", newx = test, s = 0)
+  	 	 vecProbTmp <- c(vecProbTmp, testProb)
+	}
+	loo.pred = prediction(vecProbTmp, targetVec)
+	loo.perf = performance(loo.pred,"tpr","fpr")
+	auc <- performance(loo.pred,"auc")
+	auc <- unlist(slot(auc, "y.values"))
+	aucRound <- round(auc,3)
+	auc.vec <- c(auc.vec, aucRound)
+
+}
+  return(auc.vec)
 }

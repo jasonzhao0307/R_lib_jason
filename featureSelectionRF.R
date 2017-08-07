@@ -13,18 +13,18 @@ if(!is.factor(targetVec)){
 if (length(weirdSymbol) == 1){
 	if (!is.na(weirdSymbol)){
 		for (wSb in weirdSymbol){
-			
+
 			gsubReplace <- paste("\\", wSb, sep="")
 			rownames(dataFrame) <- gsub(gsubReplace, "", rownames(dataFrame))
 		}
-	}	
+	}
 
 } else{
 		for (wSb in weirdSymbol){
 			gsubReplace <- paste("\\", wSb, sep="")
 			rownames(dataFrame) <- gsub(gsubReplace, "", rownames(dataFrame))
 		}
-	
+
 
 }
 
@@ -39,6 +39,11 @@ rownames(tmp) <- hyphenToUnderscore(rownames(tmp))
 df <- t(tmp)
 Y <- targetVec
 df <- cbind(df, Y)
+
+# doing CV and plot error with number of features
+result.cv <- rfcv(df, Y, cv.fold = 5)
+with(result.cv, plot(n.var, error.cv, log = "x", type = "o", lwd = 2))
+
 
 
 if (useOverlap == TRUE){
@@ -57,6 +62,10 @@ if (useOverlap == TRUE){
 	return(featureSelectionOverlap)
 }
 else{
+
+
+
+
 	featureMeanDecreaseGiniVec <- c()
 	for (i in seq(1,numRuns,1)){
 		fit_tmp=randomForest(factor(Y)~., ntree = nTree, data=df, importance=T)
@@ -65,9 +74,9 @@ else{
     		featureMeanDecreaseGiniVec <- VI_F_tmp$MeanDecreaseGini
 		}
 		else{
-			featureMeanDecreaseGiniVec <- featureMeanDecreaseGiniVec + VI_F_tmp$MeanDecreaseGini	
+			featureMeanDecreaseGiniVec <- featureMeanDecreaseGiniVec + VI_F_tmp$MeanDecreaseGini
 		}
-		
+
 	}
 	featureMeanDecreaseGiniVec <- featureMeanDecreaseGiniVec / numRuns
 	indexOrdered <- order(featureMeanDecreaseGiniVec, decreasing = T)
@@ -82,4 +91,3 @@ else{
 
 
 }
-

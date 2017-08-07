@@ -1,17 +1,20 @@
-RF_output <- function(dataFrameTrain, dataFrameTest, targetVecTrain, targetVecTest, featureSelected, nTree = 1000, title = "Random Forest ROC Curve"){
+RF_output <- function(dataFrameTrain, dataFrameTest, targetVecTrain, targetVecTest, featureSelected, nTree = 100, title = "Random Forest ROC Curve"){
 #package
 require(randomForest)
 require(ROCR)
 require(R.utils)
 sourceDirectory("/Users/yuezhao/Desktop/projects/R_lib_jason/", modifiedOnly=TRUE)
 
-#data prepare
-data_rf <- as.data.frame(t(cbind(dataFrameTrain, dataFrameTest)))
-data_rf$progress <- as.factor(c(targetVecTrain, targetVecTest))
-colnames(data_rf) <- hyphenToUnderscore(colnames(data_rf))
-inTrain <- seq(1,ncol(dataFrameTrain),1)
-data_rf_train <- data_rf[inTrain,]
-data_rf_test <- data_rf[-inTrain,]
+
+data_rf_train <- as.data.frame(t(cbind(dataFrameTrain)))
+data_rf_test <- as.data.frame(t(cbind(dataFrameTest)))
+
+data_rf_train$progress <- as.factor(c(targetVecTrain))
+data_rf_test$progress <- as.factor(c(targetVecTest))
+
+colnames(data_rf_train) <- hyphenToUnderscore(colnames(data_rf_train))
+colnames(data_rf_test) <- hyphenToUnderscore(colnames(data_rf_test))
+
 featureSelected <- hyphenToUnderscore(featureSelected)
 
 #print(featureSelected)

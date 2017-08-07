@@ -1,4 +1,4 @@
-plot_PCA_new <- function(sampleDataFrame, condition, useLabel = FALSE, title = "PCA plot", useVST = FALSE, useAllFeature = TRUE, nFeature = 1000, printUsage = F, pointSize = 4, useFrame = FALSE){
+plot_PCA_new <- function(sampleDataFrame, condition, useLabel = FALSE, title = "PCA plot", useVST = FALSE, useAllFeature = TRUE, nFeature = 1000, printUsage = F, pointSize = 4, useFrame = FALSE, outputPDF = FALSE, outputName = "PCA_undefined.pdf", width = 16, height = 14){
 
 # print usage
 # use cat to create newline in R
@@ -72,7 +72,7 @@ if (useVST == TRUE){
  		ylab(paste0("PC2: ",percentVar[2],"% variance")) +labs(title=title) + geom_point(size = pointSize) + theme(plot.title = element_text(hjust = 0.5))
 	}
 	#result <- plot_handle
-	#return(result)	
+	#return(result)
 
 }
 else {
@@ -98,7 +98,7 @@ else {
 	}
 	else{
 		# plot_handle <- autoplot()
-		autoplot(pca_result, data = sampleDataFrame_pca, colour = 'condition', label.size = pointSize, frame = useFrame, 
+		autoplot(pca_result, data = sampleDataFrame_pca, colour = 'condition', label.size = pointSize, frame = useFrame,
 		shape = FALSE, main = title,
 		xlab = paste0("PC1: ",percentVar[1],"% variance"), ylab = paste0("PC2: ",percentVar[2],"% variance")) + theme(plot.title = element_text(hjust = 0.5))
 	}
@@ -108,11 +108,8 @@ else {
 
 }
 
-
+if (outputPDF == TRUE){
+	ggsave(outputName, width = width, height = height, units = "cm")
 }
 
-
-
-
-
-
+}
