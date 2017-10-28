@@ -1,3 +1,11 @@
+
+#package loading
+require(DESeq2)
+require(ggplot2)
+require(ggfortify)
+
+
+
 plot_PCA_new <- function(sampleDataFrame, condition, useLabel = FALSE, title = "PCA plot", useVST = FALSE, useAllFeature = TRUE, nFeature = 1000, printUsage = F, pointSize = 4, useFrame = FALSE, outputPDF = FALSE, outputName = "PCA_undefined.pdf", width = 16, height = 14){
 
 # print usage
@@ -19,12 +27,6 @@ To load all the functions from <R_lib_jason> in your own script:
 2. require(R.utils)
 3. sourceDirectory(\"path_to_<R_lib_jason>\", modifiedOnly=TRUE)")
 }
-
-
-#package loading
-require(DESeq2)
-require(ggplot2)
-require(ggfortify)
 
 
 #test and fix the constant/zero row
@@ -93,18 +95,18 @@ else {
 
 	if (useLabel == FALSE){
 		# plot_handle <- autoplot()
-		autoplot(pca_result, data = sampleDataFrame_pca, colour = 'condition', size = pointSize, frame = useFrame,
+		handle <- autoplot(pca_result, data = sampleDataFrame_pca, colour = 'condition', size = pointSize, frame = useFrame,
 		main = title, xlab = paste0("PC1: ",percentVar[1],"% variance"), ylab = paste0("PC2: ",percentVar[2],"% variance")) + theme(plot.title = element_text(hjust = 0.5))
 	}
 	else{
 		# plot_handle <- autoplot()
-		autoplot(pca_result, data = sampleDataFrame_pca, colour = 'condition', label.size = pointSize, frame = useFrame,
+		handle <- autoplot(pca_result, data = sampleDataFrame_pca, colour = 'condition', label.size = pointSize, frame = useFrame,
 		shape = FALSE, main = title,
 		xlab = paste0("PC1: ",percentVar[1],"% variance"), ylab = paste0("PC2: ",percentVar[2],"% variance")) + theme(plot.title = element_text(hjust = 0.5))
 	}
 
-	#result <- plot_handle
-	#return(result)
+
+	return(handle)
 
 }
 

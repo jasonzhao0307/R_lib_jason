@@ -9,14 +9,17 @@ x <- t(as.matrix(dataFrame))
 
 featureDict <- list()
 featureNum <- c()
+weights.vec <- rep(0,nrow(dataFrame))
 for (i in seq(1,nRun,1)) {
   if (logisticRegression == FALSE){
-    fit2 <- cv.glmnet(x, targetVec, alpha = alpha, nfolds = nfolds) 
+    fit2 <- cv.glmnet(x, targetVec, alpha = alpha, nfolds = nfolds)
   } else{
     targetVec <- as.factor(targetVec)
     fit2 <- cv.glmnet(x, targetVec, alpha = alpha, family = "binomial", type.measure = "auc", nfolds = nfolds)
   }
-  
+  weights.mat <- as.matrix(coef(fit2, s = "lambda.min"))
+  weights.vec <- (weights.vec + weights.mat[-1,1])
+
   tmp_vec <- as.vector((coef(fit2, s="lambda.min") != 0))
   featureFromGlmnet <- rownames(dataFrame)[tmp_vec]
   featureNum <- c(featureNum, length(featureFromGlmnet))
@@ -29,7 +32,7 @@ for (i in seq(1,nRun,1)) {
       if (is.na(gene) == FALSE){
         featureDict[[gene]] <- 1
       }
-      
+
     }
   }
 }
@@ -64,8 +67,12 @@ for (i in seq(1,length(numIndex),1)){
   }
 }
 
-
+return.list <- list()
+return.list[["feature"]] <- featureSelectionFloor
+return.list[["counts"]] <- featureDict
+return.list[["counts.inverse"]] <- featureDictInverse
+return.list[["weights"]] <- weights.vec
 # Here we get the features:
-return(featureSelectionFloor)
+return(return.list)
 
 }

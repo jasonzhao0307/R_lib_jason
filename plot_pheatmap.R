@@ -1,4 +1,4 @@
-plot_pheatmap <- function(dataFrame, dataLabel, rowScaling = TRUE, colorGroup = c(progressor="red", control="green"), log2Trans = FALSE, title = "Heatmap", outputPDF = FALSE, outputName = "Heatmap_undefined.pdf", showRowName = TRUE, showColName = TRUE, width = 9, height = 8){
+plot_pheatmap <- function(dataFrame, dataLabel, rowScaling = TRUE, colorGroup = c(progressor="red", control="green"), log2Trans = FALSE, title = "Heatmap", outputPDF = FALSE, outputName = "Heatmap_undefined.pdf", showRowName = TRUE, showColName = TRUE, width = 7, height = 7){
 require(pheatmap)
 
 
@@ -24,12 +24,11 @@ if (outputPDF == TRUE){
 	pheatmap(dataFrame, annotation_col= df,
 	annotation_colors= lt[1], main = title, show_rownames = showRowName, show_colnames = showColName)
 	dev.off()
-} else{
-	pheatmap(dataFrame, annotation_col= df,
+}
+
+	handle <- pheatmap(dataFrame, annotation_col= df,
 	annotation_colors= lt[1], main = title, show_rownames = showRowName, show_colnames = showColName)
+
+
+return(handle)
 }
-
-}
-
-
-

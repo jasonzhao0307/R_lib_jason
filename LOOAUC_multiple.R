@@ -13,7 +13,7 @@ for (i in 1:length(dfList)){
 	vecProb <- rep(0.0, length(targetVec))
 	for (k in 1:nTimes){
 		vecProbTmp <- c()
-		for (j in 1:nSample){	
+		for (j in 1:nSample){
 			train = t(as.matrix(df[,-j]))
 			test = t(as.matrix(df[,j]))
   	 	 	fit <- cv.glmnet(train, targetVec[-j], nfolds = nfolds, alpha = 0, family = "binomial", type.measure = "class")
@@ -21,7 +21,7 @@ for (i in 1:length(dfList)){
   	 	 	vecProbTmp <- c(vecProbTmp, testProb)
 		}
 		vecProb <- vecProb + vecProbTmp
-		
+
 
 	}
 
@@ -37,7 +37,7 @@ for (i in 1:length(dfList)){
 if (i==1){
 	plot(loo.perf,main=title,col=colorVec[i],lwd=3, cex=4)
 	#legend(xLegendLocation,0.7,signatureNameVec[i], col=colorVec[i])
-} 
+}
 else{
 	par(new = TRUE)
 	plot(loo.perf,col=colorVec[i],lwd=3, cex=4)
@@ -70,3 +70,29 @@ return(aucList)
 
 
 
+
+
+
+
+
+LOOAUC_single_df_noplot <- function(df, targetVec, nTimes = 50, nfolds = 3){
+	auc.vec <- c()
+	nSample <- ncol(df)
+	for (k in 1:nTimes){
+		vecProbTmp <- c()
+		for (j in 1:nSample){
+			train = t(as.matrix(df[,-j]))
+			test = t(as.matrix(df[,j]))
+  	 	fit <- cv.glmnet(train, targetVec[-j], nfolds = nfolds, alpha = 0, family = "binomial", type.measure = "class")
+  	 	testProb <- predict(fit,type="response", newx = test, s = 'lambda.min')
+  	 	vecProbTmp <- c(vecProbTmp, testProb)
+		}
+		  loo.pred = prediction(vecProbTmp, targetVec)
+			loo.perf = performance(loo.pred,"tpr","fpr")
+			auc <- performance(loo.pred,"auc")
+			auc <- unlist(slot(auc, "y.values"))
+			aucRound <- round(auc,3)
+			auc.vec[k] <- aucRound
+	}
+return(auc.vec)
+}
